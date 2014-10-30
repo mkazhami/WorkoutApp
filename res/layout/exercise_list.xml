@@ -17,37 +17,10 @@
         android:layout_gravity="right"
         android:src="@drawable/ic_action_new" />
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/item_height"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/item_height"
-            android:layout_toLeftOf="@id/click_remove"
-            android:layout_toRightOf="@id/drag_handle"
-            android:gravity="center_vertical"
-            android:paddingLeft="8dp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <ImageView
-            android:id="@id/click_remove"
-            android:layout_width="@dimen/delete_icon_height"
-            android:layout_height="@dimen/delete_icon_height"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/delete_x_android"
-            android:gravity="right" />
-
-        <ImageView
-            android:id="@id/drag_handle"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/item_height"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/drag" />
-    </RelativeLayout>
+     <ListView
+         android:id="@+id/exerciseListView"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content" >
+     </ListView>
 	
 </LinearLayout>

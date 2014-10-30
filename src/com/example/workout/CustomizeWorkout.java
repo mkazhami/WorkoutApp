@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -20,8 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class CustomizeWorkout extends Activity implements EditedExercise {
-	
-	public static final String EXER_KEY = "exercise";
 	
 	private Workout workout;
 	
@@ -99,7 +96,7 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
                     CustomizeExercise customizeExerciseDialog = new CustomizeExercise();
                     
                     Bundle bundle = new Bundle();
-                    bundle.putParcelable(CustomizeWorkout.EXER_KEY, workout.exercises.get(pos));
+                    bundle.putParcelable(WorkoutObjects.EXER_KEY, workout.exercises.get(pos));
                     bundle.putInt("position", pos);
                     
                     customizeExerciseDialog.setArguments(bundle);
@@ -118,11 +115,10 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 				// start up the fragment that lets you create an exercise
 				android.app.FragmentManager fm = CustomizeWorkout.this.getFragmentManager();
 				//CustomizeExercise f = new CustomizeExercise();
+				ExerciseListFrag f = new ExerciseListFrag();
 				//Bundle b = new Bundle();
 				//b.putInt("position", -1);
 				//f.setArguments(b);
-				//f.show(fm, "dialog");
-				ExerciseListFrag f = new ExerciseListFrag();
 				f.show(fm, "dialog");
 			}
 			
@@ -196,6 +192,7 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 	        }
 		}
         // add the new row
+		//TODO: check if exercise has already been added - don't allow duplicates
         if (position < 0 && exercise != null) {
         	newcursor.newRow().add(newcursor.getCount()).add(exercise.getName());
         }

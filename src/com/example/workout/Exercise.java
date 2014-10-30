@@ -1,5 +1,7 @@
 package com.example.workout;
 
+import com.google.gson.Gson;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -62,6 +64,11 @@ public class Exercise implements Parcelable {
 		parcel.writeString(getName());
 		parcel.writeInt(getReps());
 		parcel.writeInt(getSets());	
+	}
+	
+	public String convertToJson() {
+		Gson gson = new Gson();
+		return gson.toJson(this);		
 	}
 	
 	
