@@ -7,8 +7,8 @@ import android.os.Parcelable;
 
 public class Exercise implements Parcelable {
 	private String exerciseName;
-	private int numberOfReps;
-	private int numberOfSets;
+	private String numberOfReps;
+	private String numberOfSets;
 	
 	public Exercise(){
 
@@ -17,20 +17,20 @@ public class Exercise implements Parcelable {
 	public void setName(String name){
 		this.exerciseName = name;
 	}
-	public void setReps(int num){
+	public void setReps(String num){
 		this.numberOfReps = num;
 	}
-	public void setSets(int num){
+	public void setSets(String num){
 		this.numberOfSets = num;
 	}
 	
 	public String getName(){
 		return this.exerciseName;
 	}
-	public int getSets(){
+	public String getSets(){
 		return this.numberOfSets;
 	}
-	public int getReps(){
+	public String getReps(){
 		return this.numberOfReps;
 	}
 
@@ -39,8 +39,8 @@ public class Exercise implements Parcelable {
         Exercise ex = new Exercise();
         
         ex.setName(in.readString());
-        ex.setReps(in.readInt());
-        ex.setSets(in.readInt());
+        ex.setReps(in.readString());
+        ex.setSets(in.readString());
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -62,8 +62,8 @@ public class Exercise implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel parcel, int flags) {
 		parcel.writeString(getName());
-		parcel.writeInt(getReps());
-		parcel.writeInt(getSets());	
+		parcel.writeString(getReps());
+		parcel.writeString(getSets());	
 	}
 	
 	public String convertToJson() {

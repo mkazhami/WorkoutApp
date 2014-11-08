@@ -30,8 +30,15 @@ public class WorkoutList {
 		}
 	}
 	
+	public void setWorkouts(ArrayList<Workout> list) {
+		workoutList = list;
+	}
+	
+	public int getSize() {
+		return workoutList.size();
+	}
+	
 	public Workout getWorkout(String name) {
-		
 		int size = workoutList.size();
 		for(int i = 0; i < size; i++){
 			if(workoutList.get(i).getName().equals(name)){
@@ -39,6 +46,20 @@ public class WorkoutList {
 			}
 		}
 		return null;
+	}
+	
+	public boolean hasWorkout(String name) {
+		int size = workoutList.size();
+		for(int i = 0; i < size; i++) {
+			if(workoutList.get(i).getName().equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Workout getWorkout(int position) {
+		return workoutList.get(position);
 	}
 	
 }

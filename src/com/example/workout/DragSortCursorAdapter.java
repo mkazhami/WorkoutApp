@@ -155,6 +155,8 @@ public abstract class DragSortCursorAdapter extends CursorAdapter implements Dra
 
         cleanMapping();
         notifyDataSetChanged();
+        
+        MainActivity.checkRemoved();
     }
 
     /**

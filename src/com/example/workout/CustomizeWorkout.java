@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class CustomizeWorkout extends Activity implements EditedExercise {
 	
@@ -30,19 +32,25 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 	private EditText editNameField;
 	private Button addExerciseButton;
 	
+	private int position;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_workout);
 		
+		Bundle bundle = this.getIntent().getExtras();
+		position = bundle.getInt("position");
+		
 		editNameField = (EditText) findViewById(R.id.workoutNameField);
 		addExerciseButton = (Button) findViewById(R.id.addExerciseButton);
-		
-		Intent myIntent = getIntent();
-		String workoutName = myIntent.getStringExtra("workoutName");
-		if (workoutName != null) {
-			workout = WorkoutList.getInstance().getWorkout(workoutName);
-			editNameField.setText(workoutName);
+
+		//String workoutName = myIntent.getStringExtra("workoutName");
+		if (position >= 0) {
+			//workout = WorkoutList.getInstance().getWorkout(workoutName);
+			workout = WorkoutList.getInstance().getWorkout(position);
+			//editNameField.setText(workoutName);
+			editNameField.setText(workout.getName());
 		}
 		else {
 			workout = new Workout();
@@ -52,8 +60,7 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
         
         String[] cols = {"name"};
         int[] ids = {R.id.text};
-        adapter = new MyAdapter(this,
-                		R.layout.list_item_click_remove, null, cols, ids, 0);
+        adapter = new MyAdapter(this, R.layout.list_item_click_remove, null, cols, ids, 0);
         dslv.setAdapter(adapter);
         
         if (workout != null) {
@@ -90,18 +97,16 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    
                 	int pos = (Integer) v.getTag();
                 	android.app.FragmentManager fm = CustomizeWorkout.this.getFragmentManager();
-                    CustomizeExercise customizeExerciseDialog = new CustomizeExercise();
+                    CustomizeExercisePartial customizeExerciseDialog = new CustomizeExercisePartial();
                     
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(WorkoutObjects.EXER_KEY, workout.exercises.get(pos));
                     bundle.putInt("position", pos);
                     
                     customizeExerciseDialog.setArguments(bundle);
-                    customizeExerciseDialog.show(fm, "frag_customize_exercise");
-                	
+                    customizeExerciseDialog.show(fm, "customize_exercise_partial");
                 }
             });
             return v;
@@ -112,18 +117,12 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
     	
     	addExerciseButton.setOnClickListener(new OnClickListener(){
 			public void onClick(View view){
-				// start up the fragment that lets you create an exercise
+				// start up the fragment that lets you choose an exercise
 				android.app.FragmentManager fm = CustomizeWorkout.this.getFragmentManager();
-				//CustomizeExercise f = new CustomizeExercise();
 				ExerciseListFrag f = new ExerciseListFrag();
-				//Bundle b = new Bundle();
-				//b.putInt("position", -1);
-				//f.setArguments(b);
 				f.show(fm, "dialog");
 			}
-			
 		});
-    	
     }
     
     private void setUpTextWatcher(){
@@ -154,18 +153,51 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 	    switch (item.getItemId()) {
 	    	case R.id.action_exit:
 	    		//EXIT
-	            
+	    		setResult(WorkoutObjects.BAD_RESULT);
+	            finish();
+	            return false; // ???????
 	        case R.id.action_save:
 	        	//SAVE
-	        	return true;
-	            
+	        	checkRemoved();
+	        	if(position == -1) MainActivity.updateList(workout);
+	        	MainActivity.onEdit(workout, position);
+	        	FileManagement.writeWorkoutFile();
+	        	setResult(WorkoutObjects.OK_RESULT);
+	        	finish();
+	        	return false;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
+	
+	private void checkRemoved() {
+		ArrayList<Integer> positions = adapter.getCursorPositions();
+		ArrayList<Exercise> newExercises = new ArrayList<Exercise>();
+		if (cursor != null) {
+			cursor.moveToFirst();
+	        for (int i = 0; i < positions.size(); i++) {
+	        	int cursorPosition = positions.get(i);
+	        	cursor.moveToPosition(cursorPosition);
+	        	String c = cursor.getString(1);
+	        	newExercises.add(workout.getExercise(c));
+	        }
+	        workout.exercises = newExercises;
+		}
+	}
 
 	@Override
 	public void onEdit(Exercise exercise, int position) {
+		if(position == -1) {
+			for(Exercise e : workout.exercises) {
+				String name = e.getName();
+				if(name.equals(exercise.getName())) {
+		    		Toast toast = Toast.makeText(this, "Exercise already exists!", Toast.LENGTH_SHORT);
+					toast.setGravity(Gravity.CENTER, 0, 0);
+					toast.show();
+		    		return;
+		    	}
+			}
+		}
 		ArrayList<Integer> positions = adapter.getCursorPositions();
 		MatrixCursor newcursor = new MatrixCursor(new String[] {"_id", "name"});
 		//int lastCursorPosition = cursor.getPosition();
@@ -192,7 +224,6 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 	        }
 		}
         // add the new row
-		//TODO: check if exercise has already been added - don't allow duplicates
         if (position < 0 && exercise != null) {
         	newcursor.newRow().add(newcursor.getCount()).add(exercise.getName());
         }

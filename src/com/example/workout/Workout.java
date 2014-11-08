@@ -2,6 +2,8 @@ package com.example.workout;
 
 import java.util.ArrayList;
 
+import com.google.gson.Gson;
+
 public class Workout {
 	
 	private String workoutName;	
@@ -13,6 +15,15 @@ public class Workout {
 	
 	public void setName(String name){
 		this.workoutName = name;
+	}
+	
+	public boolean hasExercise(String name) {
+		for(Exercise e: exercises) {
+			if(e.getName().equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void addExercise(Exercise exercise){
@@ -28,6 +39,16 @@ public class Workout {
 	
 	public String getName() {
 		return workoutName;
+	}
+	
+	public String convertToJson() {
+		Gson gson = new Gson();
+		return gson.toJson(this);
+	}
+	
+	public static Workout convertFromJson(String json) {
+		Gson gson = new Gson();
+		return gson.fromJson(json, Workout.class);
 	}
 	
 }
