@@ -1,12 +1,5 @@
 package com.example.workout;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import android.os.Bundle;
@@ -16,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -46,39 +40,11 @@ public class MainActivity extends Activity {
 		WorkoutObjects.workoutList = WorkoutList.getInstance();
 		WorkoutObjects.workoutNamesList = new ArrayList<String>();
 		WorkoutObjects.exerciseNamesList = new ArrayList<String>();
-		
-		// TEST EXERCISES - DELETE ONCE YOU GET A NEXUS CAUSE THE VIRTUAL DEVICE IS FUCKED
-		Exercise e1 = new Exercise();
-		e1.setName("Chin-up"); e1.setReps("5"); e1.setSets("5");
-		Exercise e2 = new Exercise();
-		e2.setName("Push-up"); e2.setReps("100"); e2.setSets("34");
-		WorkoutObjects.exerciseNamesList.add("Chin-up"); WorkoutObjects.exerciseNamesList.add("Push-up");
-		// TEST EXERCISES
 
 		WorkoutObjects.FOLDER_NAME = getBaseContext().getFilesDir().toString() + "/";
-		File workoutFile = new File(WorkoutObjects.FOLDER_NAME + WorkoutObjects.WORKOUT_FILE_NAME);
-		if (!(workoutFile.exists())) {
-			try {
-				workoutFile.createNewFile();
-			} 
-			catch (IOException e) { e.printStackTrace(); }
-		}
-		else {
-			try {
-				InputStream in = new FileInputStream(workoutFile);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-				String line;
-				while((line = reader.readLine()) != null) {
-					Workout workout = Workout.convertFromJson(line);
-					WorkoutObjects.workoutList.addWorkout(workout);
-					WorkoutObjects.workoutNamesList.add(workout.getName());
-				}
-				reader.close();
-				in.close();
-			} 
-			catch (FileNotFoundException e) {	e.printStackTrace(); } 
-			catch (IOException e) {	e.printStackTrace(); }
-		}
+
+		FileManagement.fillWorkoutList();
+		FileManagement.fillExerciseList();
 		
 		dslv = (DragSortListView) findViewById(R.id.workoutList);
 		String[] cols = {"name"};
@@ -108,6 +74,24 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+			case R.id.action_create_exercise:
+				android.app.FragmentManager fm = MainActivity.this.getFragmentManager();
+				CreateExercise f = new CreateExercise();
+				Bundle bundle = new Bundle();
+				bundle.putInt("caller", WorkoutObjects.MAIN_ACTIVITY);
+				f.setArguments(bundle);
+				f.show(fm, "dialog");
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	
+	
 	private void setUpListeners(){
 		addWorkout.setOnClickListener(new OnClickListener(){
 			public void onClick(View view){
@@ -132,23 +116,8 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	public static void updateList(Workout workout) {
-		String name = workout.getName();
-		int count = 0;
-		//place the new workout name in the proper (alphabetical) position
-		for(String workoutName : WorkoutObjects.workoutNamesList) {
-			if(name.compareTo(workoutName) < 0) {
-				WorkoutObjects.workoutNamesList.add(count, name);
-				break;
-			}
-			count++;
-		}
-		//if the string is greater than all the strings in the list, place it at the end
-		if(count >= WorkoutObjects.workoutNamesList.size()) {
-			WorkoutObjects.workoutNamesList.add(name);
-		}
-	}
 	
+	//checks for items deleted from the list and updates the global workout list
 	public static void checkRemoved() {
 		ArrayList<Integer> positions = adapter.getCursorPositions();
 		ArrayList<String> newWorkoutList = new ArrayList<String>();
@@ -173,6 +142,8 @@ public class MainActivity extends Activity {
 		}
 		FileManagement.writeWorkoutFile();
 	}
+	
+	
 	
 	public static void onEdit(Workout workout, int position) {
 		ArrayList<Integer> positions = adapter.getCursorPositions();
@@ -225,6 +196,8 @@ public class MainActivity extends Activity {
         
 	}
 	
+	
+	
 	// custom adapter, used to intercept list item touch events.
     private class MyAdapter extends SimpleDragSortCursorAdapter {
         private Context mContext;
@@ -243,12 +216,27 @@ public class MainActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                 	int pos = (Integer) v.getTag();
+                	Intent intent = new Intent(MainActivity.this, UseWorkout.class);
+    				Bundle extras = new Bundle();
+    				Workout w = WorkoutObjects.workoutList.getWorkout(pos);
+    				extras.putString(WorkoutObjects.WORKOUT_NAME_KEY, w.getName());
+    				extras.putParcelableArrayList(WorkoutObjects.WORKOUT_EXERCISES_KEY, w.getExercises());
+    				intent.putExtras(extras);
+    				startActivityForResult(intent, WorkoutObjects.USE_WORKOUT);
+                }
+            });
+            
+            tv.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					int pos = (Integer) v.getTag();
                 	Intent intent = new Intent(MainActivity.this, CustomizeWorkout.class);
     				Bundle extras = new Bundle();
     				extras.putInt("position", pos);
     				intent.putExtras(extras);
     				startActivityForResult(intent, WorkoutObjects.CUSTOMIZE_WORKOUT);
-                }
+					return true;
+				}
             });
             return v;
         }

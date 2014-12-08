@@ -19,10 +19,12 @@ public class CustomizeExercisePartial extends DialogFragment{
 	private EditText editName;
 	private EditText editReps;
 	private EditText editSets;
+	private EditText editInfo;
 	
 	private String name;
 	private String reps = "";
 	private String sets = "";
+	private String info = "";
 	
 	private int position;
 	
@@ -39,14 +41,17 @@ public class CustomizeExercisePartial extends DialogFragment{
     	editName = (EditText) view.findViewById(R.id.PartialCustomizeNameField);
     	editReps = (EditText) view.findViewById(R.id.PartialCustomizeRepsField);
     	editSets = (EditText) view.findViewById(R.id.PartialCustomizeSetsField);
-    	editName.setKeyListener(null);
+    	editInfo = (EditText) view.findViewById(R.id.PartialCustomizeInfoField);
+    	editName.setKeyListener(null); // name cannot be changed at this point
     	
     	name = exercise.getName();
 		reps = exercise.getReps();
 		sets = exercise.getSets();
+		info = exercise.getInfo();
 		editName.setText(name);
 		editReps.setText(reps);
 		editSets.setText(sets);
+		editInfo.setText(info);
 		
 		editExercise.setTitle("Customize Exercise");
         editExercise.setPositiveButton("Done", new PositiveButtonClickListener());
@@ -57,10 +62,10 @@ public class CustomizeExercisePartial extends DialogFragment{
         return editExercise.create();
 	}
 	
+	//defines what a valid rep or set value is
 	private boolean isValid(String num) {
 		if(num == null) return false;
 		int length = num.length();
-		if(length == 0) return false;
 		for(int i = 0; i < length; i++) {
 			char c = num.charAt(i);
 			if(c > '9' || c < '0') {
@@ -76,13 +81,13 @@ public class CustomizeExercisePartial extends DialogFragment{
         public void onClick(DialogInterface dialog, int which)
         {
         	//SHOULDNT EXIT DIALOG IF INVALID
-        	if(!isValid(reps)) {
+        	if(!isValid(reps) || reps.length() == 0) {
         		Toast toast = Toast.makeText(getActivity(), "Invalid reps!", Toast.LENGTH_SHORT);
 				toast.setGravity(Gravity.CENTER, 0, 0);
 				toast.show();
         		return;
         	}
-        	if(!isValid(sets)) {
+        	if(!isValid(sets) || sets.length() == 0) {
         		Toast toast = Toast.makeText(getActivity(), "Invalid sets!", Toast.LENGTH_SHORT);
 				toast.setGravity(Gravity.CENTER, 0, 0);
 				toast.show();
@@ -92,10 +97,10 @@ public class CustomizeExercisePartial extends DialogFragment{
         	exercise.setName(name);
         	exercise.setReps(reps);
         	exercise.setSets(sets);
+        	exercise.setInfo(info);
         	
         	EditedExercise returnActivity = (EditedExercise) getActivity();
         	returnActivity.onEdit(exercise, position);
-        	//FileManagement.writeExerciseFile();
         	dialog.dismiss();
         }
     }
@@ -131,16 +136,7 @@ public class CustomizeExercisePartial extends DialogFragment{
 		
 		TextWatcher setsListener = new TextWatcher(){
 			@Override
-			public void afterTextChanged(Editable arg0) {
-				String temp = sets;
-				sets = arg0.toString();
-				if(!isValid(sets)) {
-					Toast toast = Toast.makeText(getActivity(), "Invalid sets!", Toast.LENGTH_SHORT);
-					toast.setGravity(Gravity.CENTER, 0, 0);
-					toast.show();
-					sets = temp;
-	        	}
-			}
+			public void afterTextChanged(Editable arg0) {}
 			@Override
 			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,int arg3) {}
 			@Override
@@ -156,7 +152,18 @@ public class CustomizeExercisePartial extends DialogFragment{
 			}
 		};
 		
+		TextWatcher infoListener = new TextWatcher(){
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+			@Override
+			public void onTextChanged(CharSequence arg0, int start, int before, int count) {
+				info = arg0.toString();
+			}
+			@Override
+			public void afterTextChanged(Editable s) {}
+		};
 		editReps.addTextChangedListener(repsListener);
 		editSets.addTextChangedListener(setsListener);
+		editInfo.addTextChangedListener(infoListener);
 	}
 }

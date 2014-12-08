@@ -7,10 +7,18 @@ import com.google.gson.Gson;
 public class Workout {
 	
 	private String workoutName;	
-	public ArrayList<Exercise> exercises;
+	private ArrayList<Exercise> exercises;
 	
 	public Workout(){
 		exercises = new ArrayList<Exercise>();
+	}
+	
+	public ArrayList<Exercise> getExercises() {
+		return this.exercises;
+	}
+	
+	public void setExercises(ArrayList<Exercise> list) {
+		this.exercises = list;
 	}
 	
 	public void setName(String name){
@@ -50,5 +58,4 @@ public class Workout {
 		Gson gson = new Gson();
 		return gson.fromJson(json, Workout.class);
 	}
-	
 }

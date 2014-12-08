@@ -1,8 +1,5 @@
 package com.example.workout;
 
-import com.example.workout.CustomizeExercise.NegativeButtonClickListener;
-import com.example.workout.CustomizeExercise.PositiveButtonClickListener;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -19,8 +16,12 @@ public class CreateExercise extends DialogFragment{
 	private EditText editName;
 	private String name;
 	
+	private int caller;
+
 	@Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+		Bundle args = getArguments();
+		caller = args.getInt("caller");
 		AlertDialog.Builder createExercise = new AlertDialog.Builder(getActivity());
     	final View view = getActivity().getLayoutInflater().inflate(R.layout.create_exercise, null);
     	createExercise.setView(view);
@@ -49,8 +50,13 @@ public class CreateExercise extends DialogFragment{
         	if(name == null || name.equals("")) {
         		Toast.makeText(getActivity(), "Invalid name!", Toast.LENGTH_SHORT).show();
         	}
-        	ExerciseListFrag.updateList(name);
-        	FileManagement.writeExerciseFile();
+        	if(FileManagement.addGlobalExercise(name)) {
+        		FileManagement.writeExerciseFile();
+        	}
+        	else{
+        		//TODO: EXERCISE NAME ALREADY EXISTS - ERROR
+        	}
+        	if(caller == WorkoutObjects.EXERCISE_LIST) ExerciseListFrag.notifyChange();
         	dialog.dismiss();
         }
     }

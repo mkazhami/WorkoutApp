@@ -97,4 +97,43 @@ public class FileManagement {
 			catch (IOException e) {	e.printStackTrace(); }
 		}
 	}
+	
+	//adds a new workout in lexicographical order to the global workout names list
+	public static void addGlobalWorkout(Workout workout) {
+		String name = workout.getName();
+		int count = 0;
+		//place the new workout name in the proper (alphabetical) position
+		for(String workoutName : WorkoutObjects.workoutNamesList) {
+			if(name.compareTo(workoutName) < 0) {
+				WorkoutObjects.workoutNamesList.add(count, name);
+				break;
+			}
+			count++;
+		}
+		//if the string is greater than all the strings in the list, place it at the end
+		if(count >= WorkoutObjects.workoutNamesList.size()) {
+			WorkoutObjects.workoutNamesList.add(name);
+		}
+	}
+	
+	public static boolean addGlobalExercise(String name) {
+		//update the list with the given exercise
+		int count = 0;
+		//place the new exercise name in the proper (alphabetical) position
+		for(String exerciseName : WorkoutObjects.exerciseNamesList) {
+			if(name.compareTo(exerciseName) == 0) {
+				return false;
+			}
+			else if(name.compareTo(exerciseName) < 0) {
+				WorkoutObjects.exerciseNamesList.add(count, name);
+				return true;
+			}
+		}
+		WorkoutObjects.exerciseNamesList.add(name);
+		return true;
+	}
+	
+	public static void removeGlobalExercise(String name) {
+		WorkoutObjects.exerciseNamesList.remove(name);
+	}
 }

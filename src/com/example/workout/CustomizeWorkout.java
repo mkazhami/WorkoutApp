@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.text.Editable;
@@ -66,11 +65,11 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
         if (workout != null) {
 		    // populate the list of exercises
 		    cursor = new MatrixCursor(new String[] {"_id", "name"});
-		    int size = workout.exercises.size();
+		    int size = workout.getExercises().size();
 			for (int i = 0; i < size; i++) {
 				cursor.newRow()
 					  .add(i)
-		              .add(workout.exercises.get(i).getName());
+		              .add(workout.getExercises().get(i).getName());
 			}
 		    adapter.changeCursor(cursor);
         }
@@ -102,7 +101,7 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
                     CustomizeExercisePartial customizeExerciseDialog = new CustomizeExercisePartial();
                     
                     Bundle bundle = new Bundle();
-                    bundle.putParcelable(WorkoutObjects.EXER_KEY, workout.exercises.get(pos));
+                    bundle.putParcelable(WorkoutObjects.EXER_KEY, workout.getExercises().get(pos));
                     bundle.putInt("position", pos);
                     
                     customizeExerciseDialog.setArguments(bundle);
@@ -133,7 +132,13 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,int arg3) {}
 			@Override
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,int arg3) {
-				workout.setName(arg0.toString());
+				String temp = arg0.toString();
+				if(!WorkoutObjects.workoutList.hasWorkout(temp)) {
+					workout.setName(temp);
+				}
+				else{
+					//TODO: add error message for existing workout
+				}
 			}
 		};
 		editNameField.addTextChangedListener(nameListener);
@@ -155,21 +160,32 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 	    		//EXIT
 	    		setResult(WorkoutObjects.BAD_RESULT);
 	            finish();
-	            return false; // ???????
+	            return false;
 	        case R.id.action_save:
 	        	//SAVE
 	        	checkRemoved();
-	        	if(position == -1) MainActivity.updateList(workout);
+	        	//TODO: check for no name overlap
+	        	if(position == -1) FileManagement.addGlobalWorkout(workout);
 	        	MainActivity.onEdit(workout, position);
 	        	FileManagement.writeWorkoutFile();
 	        	setResult(WorkoutObjects.OK_RESULT);
 	        	finish();
 	        	return false;
+	        case R.id.action_create_exercise:
+	        	android.app.FragmentManager fm = CustomizeWorkout.this.getFragmentManager();
+				CreateExercise f = new CreateExercise();
+				Bundle bundle = new Bundle();
+				bundle.putInt("caller", WorkoutObjects.CUSTOMIZE_WORKOUT);
+				f.setArguments(bundle);
+				f.show(fm, "dialog");
+				return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
 	
+	//checks if any exercises have been removed and updates the global list accordingly
+	//also rewrites the workouts file on the device
 	private void checkRemoved() {
 		ArrayList<Integer> positions = adapter.getCursorPositions();
 		ArrayList<Exercise> newExercises = new ArrayList<Exercise>();
@@ -181,14 +197,14 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 	        	String c = cursor.getString(1);
 	        	newExercises.add(workout.getExercise(c));
 	        }
-	        workout.exercises = newExercises;
+	        workout.setExercises(newExercises);
 		}
 	}
 
 	@Override
 	public void onEdit(Exercise exercise, int position) {
 		if(position == -1) {
-			for(Exercise e : workout.exercises) {
+			for(Exercise e : workout.getExercises()) {
 				String name = e.getName();
 				if(name.equals(exercise.getName())) {
 		    		Toast toast = Toast.makeText(this, "Exercise already exists!", Toast.LENGTH_SHORT);
@@ -243,7 +259,7 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
         cursor = newcursor;
 		
         // modify workout to reflect the change
-        workout.exercises = newExercises;
+        workout.setExercises(newExercises);
         
 	}
 

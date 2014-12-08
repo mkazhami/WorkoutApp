@@ -10,6 +10,7 @@
     <string name="addMenuExcercisesTitle">Exercises</string>
     <string name="addMenuAddExercicesTitle">Add Exercise</string>
     <string name="title_activity_customize_exercise">Customize Exercise</string>
+    <string name="title_activity_use_workout">Use Workout</string>
     <string name="addExerciseButton">Add Exercise</string>
     <string name="addExerciseNameTitle">Exercise Name</string>
     <string name="addExerciseReps"># of reps</string>

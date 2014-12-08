@@ -9,9 +9,10 @@ public class Exercise implements Parcelable {
 	private String exerciseName;
 	private String numberOfReps;
 	private String numberOfSets;
+	private String info;
 	
 	public Exercise(){
-
+		this.info = ""; //info is optional, don't want it to be null and fail if it is not set
 	}
 	
 	public void setName(String name){
@@ -23,6 +24,9 @@ public class Exercise implements Parcelable {
 	public void setSets(String num){
 		this.numberOfSets = num;
 	}
+	public void setInfo(String info){
+		this.info = info;
+	}
 	
 	public String getName(){
 		return this.exerciseName;
@@ -33,14 +37,16 @@ public class Exercise implements Parcelable {
 	public String getReps(){
 		return this.numberOfReps;
 	}
+	public String getInfo(){
+		return this.info;
+	}
 
 	// Parcelling part
     public Exercise(Parcel in){
-        Exercise ex = new Exercise();
-        
-        ex.setName(in.readString());
-        ex.setReps(in.readString());
-        ex.setSets(in.readString());
+    	this.setName(in.readString());
+    	this.setReps(in.readString());
+    	this.setSets(in.readString());
+    	this.setInfo(in.readString());
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -63,7 +69,8 @@ public class Exercise implements Parcelable {
 	public void writeToParcel(Parcel parcel, int flags) {
 		parcel.writeString(getName());
 		parcel.writeString(getReps());
-		parcel.writeString(getSets());	
+		parcel.writeString(getSets());
+		parcel.writeString(getInfo());
 	}
 	
 	public String convertToJson() {

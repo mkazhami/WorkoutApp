@@ -21,7 +21,6 @@ public class ExerciseListFrag extends DialogFragment{
 	private int position;
 	
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-
 		AlertDialog.Builder editExercise = new AlertDialog.Builder(getActivity());
     	final View view = getActivity().getLayoutInflater().inflate(R.layout.exercise_list, null);
     	editExercise.setView(view);
@@ -38,6 +37,9 @@ public class ExerciseListFrag extends DialogFragment{
 				// start up the fragment that lets you create an exercise
 				android.app.FragmentManager fm = ExerciseListFrag.this.getFragmentManager();
 				CreateExercise f = new CreateExercise();
+				Bundle bundle = new Bundle();
+				bundle.putInt("caller", WorkoutObjects.EXERCISE_LIST);
+				f.setArguments(bundle);
 				f.show(fm, "dialog");
 			}
 		});
@@ -45,29 +47,12 @@ public class ExerciseListFrag extends DialogFragment{
 		return editExercise.create();
 	}
 	
-	public static void updateList(String name) {
-		//update the list with the given exercise
-		int count = 0;
-		//place the new exercise name in the proper (alphabetical) position
-		for(String exerciseName : WorkoutObjects.exerciseNamesList) {
-			if(name.compareTo(exerciseName) == 0) {
-				return;
-			}
-			else if(name.compareTo(exerciseName) < 0) {
-				WorkoutObjects.exerciseNamesList.add(count, name);
-				break;
-			}
-			count++;
-		}
-		//if the string is greater than all the strings in the list, place it at the end
-		if(count >= WorkoutObjects.exerciseNamesList.size()) {
-			WorkoutObjects.exerciseNamesList.add(name);
-		}
+	public static void notifyChange() {
 		adapter.notifyDataSetChanged();
 	}
 	
 	public static void removeFromList(String name) {
-		WorkoutObjects.exerciseNamesList.remove(name);
+		FileManagement.removeGlobalExercise(name);
 		adapter.notifyDataSetChanged();
 	}
 	
