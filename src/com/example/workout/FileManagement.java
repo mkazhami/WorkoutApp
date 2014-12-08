@@ -11,8 +11,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+
+import com.google.gson.Gson;
 
 public class FileManagement {
+	
+	/******************** Write to/read from workout/exercise text files ********************/
 
 	public static void writeWorkoutFile() {
 		try {
@@ -98,6 +103,8 @@ public class FileManagement {
 		}
 	}
 	
+	/***************************** ADD TO GLOBAL LIST FUNCTIONS ******************************/
+
 	//adds a new workout in lexicographical order to the global workout names list
 	public static void addGlobalWorkout(Workout workout) {
 		String name = workout.getName();
@@ -136,4 +143,71 @@ public class FileManagement {
 	public static void removeGlobalExercise(String name) {
 		WorkoutObjects.exerciseNamesList.remove(name);
 	}
+	
+	
+
+	/*********************** RECORDS FUNCTIONS ************************/
+	public static void mergeRecordList(ArrayList<ExerciseRecord> erList) {
+		for(ExerciseRecord er : erList) {
+			String name = er.getName();
+			boolean wrote = false;
+			for(ExerciseRecord record : WorkoutObjects.recordList) {
+				//if an exercise record for this exercise already exists, just add to the existing record
+				if(record.getName().equals(name)) {
+					for(Pair<String, String> info : er.getSets()) {
+						record.recordSet(info);
+					}
+					wrote = true;
+					break;
+				}
+			}
+			//if existing record wasn't found, create a new one in the global record list
+			if(!wrote) {
+				WorkoutObjects.recordList.add(er);
+			}
+		}
+		FileManagement.writeRecordFile();
+	}
+	
+	public static void writeRecordFile() {
+		try {
+    		File rFile = new File(WorkoutObjects.FOLDER_NAME + WorkoutObjects.RECORD_FILE_NAME);
+			OutputStream out = new FileOutputStream(rFile, false);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));
+			if(!rFile.exists()) {
+        		rFile.createNewFile();
+        	}
+			for(ExerciseRecord er : WorkoutObjects.recordList) {
+				bw.write(er.convertToJson());
+				bw.newLine();
+			}
+			bw.close();
+		}
+    	catch (FileNotFoundException e) { e.printStackTrace(); }
+    	catch (IOException e) { e.printStackTrace(); }
+	}
+	
+	public static void fillRecordList() {
+		File rFile = new File(WorkoutObjects.FOLDER_NAME + WorkoutObjects.RECORD_FILE_NAME);
+		if (!(rFile.exists())) {
+			try { rFile.createNewFile(); } 
+			catch (IOException e) { e.printStackTrace(); }
+		}
+		else {
+			try {
+				InputStream in = new FileInputStream(rFile);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+				String line;
+				while((line = reader.readLine()) != null) {
+					ExerciseRecord er = ExerciseRecord.convertFromJson(line);
+					WorkoutObjects.recordList.add(er);
+				}
+				reader.close();
+				in.close();
+			} 
+			catch (FileNotFoundException e) {	e.printStackTrace(); } 
+			catch (IOException e) {	e.printStackTrace(); }
+		}
+	}
+	 
 }

@@ -1,21 +1,63 @@
 package com.example.workout;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+
+import com.google.gson.Gson;
+
 public class ExerciseRecord {
 
 	private String name;
-	private String[] sets;
+	private ArrayList<Pair<String, String>> sets; //date and weight values - date will be in day/month/year format
 	
 	public ExerciseRecord(String name, int setsAmount) {
 		this.name = name;
-		this.sets = new String[setsAmount];
+		this.sets = new ArrayList<Pair<String, String>>();
 	}
 	
-	public void recordSet(int set, String amount) {
-		this.sets[set] = amount;
+	public ExerciseRecord(String name, ArrayList<Pair<String, String>> list) {
+		this.name = name;
+		this.sets = list;
+	}
+	
+	public ExerciseRecord clone() {
+		String newName = new String(name);
+		ArrayList<Pair<String, String>> newSets = new ArrayList<Pair<String, String>>();
+		for(Pair<String, String> pair : sets) {
+			Pair<String, String> newPair = new Pair<String, String>(pair.getL(), pair.getR());
+			newSets.add(newPair);
+		}
+		return new ExerciseRecord(newName, newSets);
+	}
+
+	public void recordSet(String weight) {
+		Calendar c = Calendar.getInstance();
+		String date = Integer.toString(c.get(Calendar.DAY_OF_MONTH)) + "/" +
+					  Integer.toString(c.get(Calendar.MONTH)) + "/" +
+					  Integer.toString(c.get(Calendar.YEAR));
+		sets.add(new Pair<String, String>(date, weight));
+	}
+	
+	public void recordSet(Pair<String, String> info) {
+		sets.add(info);
 	}
 	
 	public String getName() {
 		return this.name;
+	}
+	
+	public ArrayList<Pair<String, String>> getSets() {
+		return this.sets;
+	}
+	
+	public String convertToJson() {
+		Gson gson = new Gson();
+		return gson.toJson(this, ExerciseRecord.class);
+	}
+	
+	public static ExerciseRecord convertFromJson(String s) {
+		Gson gson = new Gson();
+		return gson.fromJson(s, ExerciseRecord.class);
 	}
 	
 }

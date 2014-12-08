@@ -23,14 +23,24 @@ public class UseWorkout extends Activity{
 	
 	TableLayout workoutTable;
 	
+	ArrayList<ExerciseRecord> oldRecords;
 	ArrayList<ExerciseRecord> records;
 	public int currentSet = 0;
 	public int exerCount = 0;
 	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.use_workout);
+		
+		//keep old records in case they cancel the workout
+		//FIX: will only merge list with global list if the 'record' button is pressed
+		//TODO: delete this cloning process
+		oldRecords = new ArrayList<ExerciseRecord>();
+		for(ExerciseRecord er : WorkoutObjects.recordList) {
+			oldRecords.add(er.clone());
+		}
 		
 		Bundle bundle = this.getIntent().getExtras();
 		workout = new Workout();
@@ -48,6 +58,11 @@ public class UseWorkout extends Activity{
 		}
 		
 		final ArrayList<Pair<EditText, Integer>> editTextList = new ArrayList<Pair<EditText, Integer>>();
+		final ArrayList<Pair<TextView, Integer>> textViewList = new ArrayList<Pair<TextView, Integer>>();
+		final ArrayList<String> textViewNameList = new ArrayList<String>();
+		final ArrayList<String> textViewSetsList = new ArrayList<String>();
+		final ArrayList<String> textViewRepsList = new ArrayList<String>();
+		final ArrayList<String> textViewInfoList = new ArrayList<String>();
 		
 		//fill the table with the exercises
 		for(Exercise e: workout.getExercises()) {
@@ -55,14 +70,12 @@ public class UseWorkout extends Activity{
 			row.setBackgroundResource(R.drawable.cell_shape);
 			row.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 			TextView name = new TextView(this);
-			name.setOnLongClickListener(new OnLongClickListener() {
-				@Override
-				public boolean onLongClick(View v) {
-					//TODO: GATHER INFORMATION ABOUT EXERCISE
-					//TODO: SHOW DIALOG WITH INFO ABOUT EXERCISE
-					return false;
-				}
-			});
+			textViewList.add(new Pair<TextView, Integer>(name, exerCount));
+			textViewNameList.add(e.getName());
+			textViewSetsList.add(e.getSets());
+			textViewRepsList.add(e.getReps());
+			textViewInfoList.add(e.getInfo());
+
 			name.setPadding(10, 40, 30, 40);
 			name.setGravity(Gravity.CENTER_VERTICAL);
 			name.setText(e.getName());
@@ -104,16 +117,40 @@ public class UseWorkout extends Activity{
 				public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 				@Override
 				public void onTextChanged(CharSequence s, int start, int before, int count) {
+					//code/100 will be the exercise number
 					int exerCode = (int) code/100;
-					int copy = code;
-					while(copy >= 100) {
-						copy -= 100;
+					int set = code;
+					//the remainder of code/100 will be the set number
+					//set variable might not be needed - exercise records will be kept for an exercise 
+					//    name for all workouts in one spot
+					while(set >= 100) {
+						set -= 100;
 					}
-					int set = copy;
-					getRecord(exerCode).recordSet(set, s.toString());
+					getRecord(exerCode).recordSet(s.toString());
 				}
 				@Override
 				public void afterTextChanged(Editable s) {}
+			});
+		}
+		
+		for(Pair<TextView, Integer> tvPair : textViewList) {
+			final int pos = tvPair.getR();
+			TextView tv = tvPair.getL();
+			tv.setOnLongClickListener(new OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					Bundle bundle = new Bundle();
+					bundle.putString("name", textViewNameList.get(pos));
+					bundle.putString("sets", textViewSetsList.get(pos));
+					bundle.putString("reps", textViewRepsList.get(pos));
+					bundle.putString("info", textViewInfoList.get(pos));
+					
+					android.app.FragmentManager fm = UseWorkout.this.getFragmentManager();
+					ExerciseInfoFrag f = new ExerciseInfoFrag();
+					f.setArguments(bundle);
+					f.show(fm, "dialog");
+					return false;
+				}
 			});
 		}
 	}
@@ -121,4 +158,14 @@ public class UseWorkout extends Activity{
 	public ExerciseRecord getRecord(int code) {
 		return records.get(code);
 	}
+	
+	
+	
+	//TODO: add cancel and record buttons
+	//cancel - delete all set records for this workout
+	//		just don't call mergeRecordList - changes won't be saved to global list
+	//		should just be a back (or cancel to be more specific) button that does nothing but go to parent activity
+	//record - add this workout's records to the history:
+	//		call mergeRecordList and pass in the records list, then go back to parent activity (?)
+	
 }
