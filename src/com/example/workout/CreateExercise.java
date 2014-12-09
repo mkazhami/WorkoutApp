@@ -50,14 +50,14 @@ public class CreateExercise extends DialogFragment{
         	if(name == null || name.equals("")) {
         		Toast.makeText(getActivity(), "Invalid name!", Toast.LENGTH_SHORT).show();
         	}
-        	if(FileManagement.addGlobalExercise(name)) {
-        		FileManagement.writeExerciseFile();
+        	if(!FileManagement.addGlobalExercise(name)) {
+        		Toast.makeText(getActivity(), "Exercise name already exists!", Toast.LENGTH_SHORT).show();
         	}
         	else{
-        		//TODO: EXERCISE NAME ALREADY EXISTS - ERROR
+        		FileManagement.writeExerciseFile();
+        		if(caller == WorkoutObjects.EXERCISE_LIST) ExerciseListFrag.notifyChange();
+            	dialog.dismiss();
         	}
-        	if(caller == WorkoutObjects.EXERCISE_LIST) ExerciseListFrag.notifyChange();
-        	dialog.dismiss();
         }
     }
     

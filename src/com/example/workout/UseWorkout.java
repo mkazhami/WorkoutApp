@@ -3,13 +3,15 @@ package com.example.workout;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
@@ -29,7 +31,6 @@ public class UseWorkout extends Activity{
 	
 	ArrayList<ExerciseRecord> oldRecords;
 	ArrayList<ExerciseRecord> records;
-	//public int currentSet = 0;
 	public int exerCount = 0;
 	
 
@@ -156,25 +157,42 @@ public class UseWorkout extends Activity{
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		final Context context_use_workout = this;
 	    switch (item.getItemId()) {
-	        case R.id.recordWorkout:
-	        	//TODO: add confirmation dialog
-	            FileManagement.mergeRecordList(records);
-	            Toast.makeText(this, "Recorded Workout!", Toast.LENGTH_SHORT).show();
-	            finish();
-	            return false;
+	        case R.id.action_save:
+	        	new AlertDialog.Builder(this)
+	            	.setIcon(android.R.drawable.ic_dialog_alert)
+	            	.setTitle("Record Workout")
+	            	.setMessage("Are you sure you want to record this workout?\nNo changes can be made after it is recorded.")
+	            	.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	            		@Override
+	            		public void onClick(DialogInterface dialog, int which) {
+	            			FileManagement.mergeRecordList(records);
+	            			Toast.makeText(context_use_workout, "Recorded Workout!", Toast.LENGTH_SHORT).show();
+	            			finish();
+	            		}
+	            	})
+	            	.setNegativeButton("No", null)
+	            	.show();
+	            return true;
+	        case R.id.action_exit:
+	        	new AlertDialog.Builder(this)
+	            	.setIcon(android.R.drawable.ic_dialog_alert)
+	            	.setTitle("Discard Changes")
+	            	.setMessage("Are you sure you want to exit and discard all recorded sets?")
+	            	.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	            		@Override
+	            		public void onClick(DialogInterface dialog, int which) {
+	            			Toast.makeText(context_use_workout, "Discarded Workout!", Toast.LENGTH_SHORT).show();
+	            			finish();
+	            		}
+	            	})
+	            	.setNegativeButton("No", null)
+	            	.show();
+	            return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
-	
-	
-	
-	//TODO: add cancel and record buttons
-	//cancel - delete all set records for this workout
-	//		just don't call mergeRecordList - changes won't be saved to global list
-	//		should just be a back (or cancel to be more specific) button that does nothing but go to parent activity
-	//record - add this workout's records to the history:
-	//		call mergeRecordList and pass in the records list, then go back to parent activity (?)
 	
 }

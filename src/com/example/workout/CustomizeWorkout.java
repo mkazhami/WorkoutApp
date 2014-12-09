@@ -44,11 +44,8 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 		editNameField = (EditText) findViewById(R.id.workoutNameField);
 		addExerciseButton = (Button) findViewById(R.id.addExerciseButton);
 
-		//String workoutName = myIntent.getStringExtra("workoutName");
 		if (position >= 0) {
-			//workout = WorkoutList.getInstance().getWorkout(workoutName);
 			workout = WorkoutList.getInstance().getWorkout(position);
-			//editNameField.setText(workoutName);
 			editNameField.setText(workout.getName());
 		}
 		else {
@@ -132,13 +129,7 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,int arg3) {}
 			@Override
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,int arg3) {
-				String temp = arg0.toString();
-				if(!WorkoutObjects.workoutList.hasWorkout(temp)) {
-					workout.setName(temp);
-				}
-				else{
-					//TODO: add error message for existing workout
-				}
+				workout.setName(arg0.toString());
 			}
 		};
 		editNameField.addTextChangedListener(nameListener);
@@ -160,17 +151,21 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 	    		//EXIT
 	    		setResult(WorkoutObjects.BAD_RESULT);
 	            finish();
-	            return false;
+	            return true;
 	        case R.id.action_save:
 	        	//SAVE
 	        	checkRemoved();
-	        	//TODO: check for no name overlap
-	        	if(position == -1) FileManagement.addGlobalWorkout(workout);
-	        	MainActivity.onEdit(workout, position);
-	        	FileManagement.writeWorkoutFile();
-	        	setResult(WorkoutObjects.OK_RESULT);
-	        	finish();
-	        	return false;
+	        	if(WorkoutObjects.workoutList.hasWorkout(workout.getName())) {
+	        		Toast.makeText(this, "Workout name already exists!", Toast.LENGTH_SHORT).show();
+	        	}
+	        	else{
+		        	if(position == -1) FileManagement.addGlobalWorkout(workout);
+		        	MainActivity.onEdit(workout, position);
+		        	FileManagement.writeWorkoutFile();
+		        	setResult(WorkoutObjects.OK_RESULT);
+		        	finish();
+	        	}
+	        	return true;
 	        case R.id.action_create_exercise:
 	        	android.app.FragmentManager fm = CustomizeWorkout.this.getFragmentManager();
 				CreateExercise f = new CreateExercise();

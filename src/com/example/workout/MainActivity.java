@@ -174,7 +174,6 @@ public class MainActivity extends Activity {
 	        }
 		}
         // add the new row
-		//TODO: check if workout has already been added - don't allow duplicates
         if (position < 0 && workout != null) {
         	newcursor.newRow().add(newcursor.getCount()).add(workout.getName());
         }

@@ -3,7 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp" >
+    android:padding="15dp" >
+
+    <Button
+        android:id="@+id/find_video"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:layout_marginTop="0dip"
+        android:layout_marginBottom="5dip"
+        android:drawableRight="@drawable/find_video"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:paddingLeft="12dip"
+        android:text="Find Video" />
 
     <TextView
         android:id="@+id/exerciseInfoName"
@@ -15,10 +30,7 @@
         android:id="@+id/exerciseInfoNameField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10" >
-
-        <requestFocus />
-    </EditText>
+        android:ems="10" />
 
     <TextView
         android:id="@+id/exerciseInfoSets"

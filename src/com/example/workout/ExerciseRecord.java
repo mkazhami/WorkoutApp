@@ -19,16 +19,6 @@ public class ExerciseRecord {
 		this.name = name;
 		this.sets = list;
 	}
-	
-	public ExerciseRecord clone() {
-		String newName = new String(name);
-		ArrayList<Pair<String, String>> newSets = new ArrayList<Pair<String, String>>();
-		for(Pair<String, String> pair : sets) {
-			Pair<String, String> newPair = new Pair<String, String>(pair.getL(), pair.getR());
-			newSets.add(newPair);
-		}
-		return new ExerciseRecord(newName, newSets);
-	}
 
 	public void recordSet(String weight) {
 		Calendar c = Calendar.getInstance();

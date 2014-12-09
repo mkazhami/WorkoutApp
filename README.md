@@ -1,3 +1,3 @@
 WorkoutApp
 ==========
-Workout application to plan, record, and track workouts.
+Android application to plan, record, and track workouts.
