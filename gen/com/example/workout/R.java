@@ -233,6 +233,7 @@ containing a value of this type.
         public static final int onDown=0x7f050002;
         public static final int onLongPress=0x7f050004;
         public static final int onMove=0x7f050003;
+        public static final int recordWorkout=0x7f050034;
         public static final int text=0x7f05002b;
         public static final int useWorkoutTable=0x7f05002f;
         public static final int workoutList=0x7f050010;
@@ -256,6 +257,7 @@ containing a value of this type.
         public static final int add_exercise=0x7f080000;
         public static final int add_workout=0x7f080001;
         public static final int main=0x7f080002;
+        public static final int use_workout=0x7f080003;
     }
     public static final class string {
         public static final int action_exit=0x7f06000f;
@@ -271,6 +273,7 @@ containing a value of this type.
         public static final int addWorkout=0x7f060003;
         public static final int app_name=0x7f060000;
         public static final int mainTitle=0x7f060002;
+        public static final int record_workout=0x7f060011;
         public static final int selectExerciseTitle=0x7f060010;
         public static final int title_activity_customize_exercise=0x7f060008;
         public static final int title_activity_customize_workout=0x7f060004;

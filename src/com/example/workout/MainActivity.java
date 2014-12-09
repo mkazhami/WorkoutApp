@@ -40,11 +40,13 @@ public class MainActivity extends Activity {
 		WorkoutObjects.workoutList = WorkoutList.getInstance();
 		WorkoutObjects.workoutNamesList = new ArrayList<String>();
 		WorkoutObjects.exerciseNamesList = new ArrayList<String>();
+		WorkoutObjects.recordList = new ArrayList<ExerciseRecord>();
 
 		WorkoutObjects.FOLDER_NAME = getBaseContext().getFilesDir().toString() + "/";
 
 		FileManagement.fillWorkoutList();
 		FileManagement.fillExerciseList();
+		FileManagement.fillRecordList();
 		
 		dslv = (DragSortListView) findViewById(R.id.workoutList);
 		String[] cols = {"name"};

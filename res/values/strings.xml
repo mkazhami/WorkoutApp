@@ -18,5 +18,6 @@
     <string name="action_save">Save &amp; Exit</string>
     <string name="action_exit">Exit Without Saving</string>
     <string name="selectExerciseTitle">Select Exercise</string>
+    <string name="record_workout">Record</string>
 
 </resources>

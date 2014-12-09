@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -16,6 +19,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class UseWorkout extends Activity{
 
@@ -25,7 +29,7 @@ public class UseWorkout extends Activity{
 	
 	ArrayList<ExerciseRecord> oldRecords;
 	ArrayList<ExerciseRecord> records;
-	public int currentSet = 0;
+	//public int currentSet = 0;
 	public int exerCount = 0;
 	
 
@@ -33,14 +37,6 @@ public class UseWorkout extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.use_workout);
-		
-		//keep old records in case they cancel the workout
-		//FIX: will only merge list with global list if the 'record' button is pressed
-		//TODO: delete this cloning process
-		oldRecords = new ArrayList<ExerciseRecord>();
-		for(ExerciseRecord er : WorkoutObjects.recordList) {
-			oldRecords.add(er.clone());
-		}
 		
 		Bundle bundle = this.getIntent().getExtras();
 		workout = new Workout();
@@ -80,9 +76,7 @@ public class UseWorkout extends Activity{
 			name.setGravity(Gravity.CENTER_VERTICAL);
 			name.setText(e.getName());
 			row.addView(name);
-			for(int i = 0; i < Integer.parseInt(e.getSets()); i++) {
-				currentSet = i;
-				
+			for(int i = 0; i < Integer.parseInt(e.getSets()); i++) {				
 				TextView divider = new TextView(this);
 				divider.setBackgroundColor(Color.BLACK);
 				divider.setWidth(2);
@@ -118,15 +112,8 @@ public class UseWorkout extends Activity{
 				@Override
 				public void onTextChanged(CharSequence s, int start, int before, int count) {
 					//code/100 will be the exercise number
-					int exerCode = (int) code/100;
-					int set = code;
-					//the remainder of code/100 will be the set number
-					//set variable might not be needed - exercise records will be kept for an exercise 
-					//    name for all workouts in one spot
-					while(set >= 100) {
-						set -= 100;
-					}
-					getRecord(exerCode).recordSet(s.toString());
+					int exerCode = (int) Math.floor(code/100);
+					getRecord(exerCode).recordSet(code%100, s.toString());
 				}
 				@Override
 				public void afterTextChanged(Editable s) {}
@@ -157,6 +144,28 @@ public class UseWorkout extends Activity{
 	
 	public ExerciseRecord getRecord(int code) {
 		return records.get(code);
+	}
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    // Inflate the menu items for use in the action bar
+	    getMenuInflater().inflate(R.menu.use_workout, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case R.id.recordWorkout:
+	        	//TODO: add confirmation dialog
+	            FileManagement.mergeRecordList(records);
+	            Toast.makeText(this, "Recorded Workout!", Toast.LENGTH_SHORT).show();
+	            finish();
+	            return false;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
 	}
 	
 	

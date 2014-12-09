@@ -38,6 +38,20 @@ public class ExerciseRecord {
 		sets.add(new Pair<String, String>(date, weight));
 	}
 	
+	public void recordSet(int set, String weight) {
+		Calendar c = Calendar.getInstance();
+		String date = Integer.toString(c.get(Calendar.DAY_OF_MONTH)) + "/" +
+					  Integer.toString(c.get(Calendar.MONTH) + 1) + "/" + //need MONTH + 1 because January = 0
+					  Integer.toString(c.get(Calendar.YEAR));
+		if(set >= sets.size()) {
+			sets.add(new Pair<String, String>(date, weight));
+		}
+		else{
+			sets.remove(set);
+			sets.add(set, new Pair<String, String>(date, weight));
+		}
+	}
+	
 	public void recordSet(Pair<String, String> info) {
 		sets.add(info);
 	}
