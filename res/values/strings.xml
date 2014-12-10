@@ -19,5 +19,8 @@
     <string name="action_exit">Exit Without Saving</string>
     <string name="selectExerciseTitle">Select Exercise</string>
     <string name="record_workout">Record</string>
+    <string name="action_history">View History</string>
+    <string name="title_activity_view_history_menu">View History</string>
+    <string name="title_activity_view_history_exercise">View History</string>
 
 </resources>

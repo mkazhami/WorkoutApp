@@ -37,6 +37,14 @@
             android:name="com.example.workout.AddExercise"
             android:label="@string/title_activity_customize_exercise" >
         </activity>
+        <activity 
+            android:name="com.example.workout.ViewHistoryMenu"
+            android:label="@string/title_activity_view_history_menu">
+        </activity>
+        <activity 
+            android:name="com.example.workout.ViewHistoryExercise"
+            android:label="@string/title_activity_view_history_exercise">
+        </activity>
     </application>
 
 </manifest>

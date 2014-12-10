@@ -205,16 +205,19 @@ containing a value of this type.
         public static final int PartialCustomizeSetsTitle=0x7f050016;
         public static final int RelativeLayout1=0x7f050007;
         public static final int RelativeLayout2=0x7f05000d;
-        public static final int action_create_exercise=0x7f050032;
-        public static final int action_exit=0x7f050034;
-        public static final int action_save=0x7f050033;
-        public static final int action_settings=0x7f050031;
+        public static final int action_create_exercise=0x7f050035;
+        public static final int action_exit=0x7f050037;
+        public static final int action_history=0x7f050034;
+        public static final int action_save=0x7f050036;
+        public static final int action_settings=0x7f050033;
         public static final int addExerciseButton=0x7f05000c;
         public static final int addWorkout=0x7f050011;
-        public static final int clickRemove=0x7f050000;
-        public static final int click_remove=0x7f050006;
+        public static final int clickRemove=0x7f050002;
+        public static final int click_remove=0x7f050001;
         public static final int deleteExercise=0x7f05002f;
-        public static final int drag_handle=0x7f050005;
+        public static final int drag_handle=0x7f050000;
+        public static final int exerciseHistory=0x7f050031;
+        public static final int exerciseHistoryListView=0x7f050032;
         public static final int exerciseInfoInfo=0x7f050023;
         public static final int exerciseInfoInfoField=0x7f050024;
         public static final int exerciseInfoName=0x7f05001d;
@@ -228,13 +231,13 @@ containing a value of this type.
         public static final int exerciseListView=0x7f050025;
         public static final int exerciseTitle=0x7f050009;
         public static final int find_video=0x7f05001c;
-        public static final int flingRemove=0x7f050001;
+        public static final int flingRemove=0x7f050003;
         public static final int linearLayout1=0x7f05000f;
         public static final int mainTitle=0x7f05000e;
         public static final int nameWorkoutField=0x7f05002d;
-        public static final int onDown=0x7f050002;
-        public static final int onLongPress=0x7f050004;
-        public static final int onMove=0x7f050003;
+        public static final int onDown=0x7f050004;
+        public static final int onLongPress=0x7f050005;
+        public static final int onMove=0x7f050006;
         public static final int text=0x7f05002c;
         public static final int useWorkoutTable=0x7f050030;
         public static final int workoutList=0x7f050010;
@@ -253,6 +256,8 @@ containing a value of this type.
         public static final int name_workout=0x7f030008;
         public static final int simplerow=0x7f030009;
         public static final int use_workout=0x7f03000a;
+        public static final int view_history_exercise=0x7f03000b;
+        public static final int view_history_menu=0x7f03000c;
     }
     public static final class menu {
         public static final int add_exercise=0x7f080000;
@@ -262,6 +267,7 @@ containing a value of this type.
     }
     public static final class string {
         public static final int action_exit=0x7f06000f;
+        public static final int action_history=0x7f060012;
         public static final int action_save=0x7f06000e;
         public static final int action_settings=0x7f060001;
         public static final int addExerciseButton=0x7f06000a;
@@ -279,6 +285,8 @@ containing a value of this type.
         public static final int title_activity_customize_exercise=0x7f060008;
         public static final int title_activity_customize_workout=0x7f060004;
         public static final int title_activity_use_workout=0x7f060009;
+        public static final int title_activity_view_history_exercise=0x7f060014;
+        public static final int title_activity_view_history_menu=0x7f060013;
     }
     public static final class style {
         /** 

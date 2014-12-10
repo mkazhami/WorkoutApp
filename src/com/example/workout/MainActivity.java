@@ -27,10 +27,7 @@ public class MainActivity extends Activity {
 	
 	private static MyAdapter adapter;
 	private static MatrixCursor cursor;
-	
-	
-	//private static ArrayAdapter<String> adapter1;
-	//private ListView list;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +84,8 @@ public class MainActivity extends Activity {
 				f.setArguments(bundle);
 				f.show(fm, "dialog");
 				return true;
+			case R.id.action_history:
+				
 			default:
 				return super.onOptionsItemSelected(item);
 		}

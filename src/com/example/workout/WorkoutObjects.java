@@ -13,6 +13,8 @@ public class WorkoutObjects {
 	public static final int EXERCISE_LIST = 4;
 	public static final int CHOOSE_EXERCISE = 5;
 	public static final int DELETE_EXERCISE = 6;
+	public static final int VIEW_HISTORY_MENU = 7;
+	public static final int VIEW_HISTORY_EXERCISE = 8;
 	public static final String EXER_KEY = "exercise";
 	public static final String WORKOUT_EXERCISES_KEY = "exerciseList";
 	public static final String WORKOUT_NAME_KEY = "workoutName";
