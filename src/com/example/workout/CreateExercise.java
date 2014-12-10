@@ -50,7 +50,7 @@ public class CreateExercise extends DialogFragment{
         	if(name == null || name.equals("")) {
         		Toast.makeText(getActivity(), "Invalid name!", Toast.LENGTH_SHORT).show();
         	}
-        	if(!FileManagement.addGlobalExercise(name)) {
+        	else if(!FileManagement.addGlobalExercise(name)) {
         		Toast.makeText(getActivity(), "Exercise name already exists!", Toast.LENGTH_SHORT).show();
         	}
         	else{

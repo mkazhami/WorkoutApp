@@ -57,7 +57,7 @@ public class CustomizeExercisePartial extends DialogFragment{
         editExercise.setPositiveButton("Done", new PositiveButtonClickListener());
         editExercise.setNegativeButton("Cancel", new NegativeButtonClickListener());
         
-        setFieldListeners();
+        //setFieldListeners();
         
         return editExercise.create();
 	}
@@ -80,7 +80,10 @@ public class CustomizeExercisePartial extends DialogFragment{
         @Override
         public void onClick(DialogInterface dialog, int which)
         {
-        	//SHOULDNT EXIT DIALOG IF INVALID
+        	sets = editSets.getText().toString();
+        	reps = editReps.getText().toString();
+        	info = editInfo.getText().toString();
+        	//TODO: SHOULDNT EXIT DIALOG IF INVALID
         	if(!isValid(reps) || reps.length() == 0) {
         		Toast toast = Toast.makeText(getActivity(), "Invalid reps!", Toast.LENGTH_SHORT);
 				toast.setGravity(Gravity.CENTER, 0, 0);

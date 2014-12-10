@@ -33,6 +33,15 @@ public class UseWorkout extends Activity{
 	ArrayList<ExerciseRecord> records;
 	public int exerCount = 0;
 	
+	//lists to hold the data that is to be recorded
+	//also keep track of which EditText/TextView corresponds to each exercise or set inside an exercise
+	final ArrayList<Pair<EditText, Integer>> editTextList = new ArrayList<Pair<EditText, Integer>>();
+	final ArrayList<Pair<TextView, Integer>> textViewList = new ArrayList<Pair<TextView, Integer>>();
+	final ArrayList<String> textViewNameList = new ArrayList<String>();
+	final ArrayList<String> textViewSetsList = new ArrayList<String>();
+	final ArrayList<String> textViewRepsList = new ArrayList<String>();
+	final ArrayList<String> textViewInfoList = new ArrayList<String>();
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,18 +57,12 @@ public class UseWorkout extends Activity{
 		workoutTable = (TableLayout) findViewById(R.id.useWorkoutTable);
 		workoutTable.removeAllViews();
 		
+		//create records for each exercise in the workout
 		records = new ArrayList<ExerciseRecord>();
 		for(Exercise e: workout.getExercises()) {
 			ExerciseRecord record = new ExerciseRecord(e.getName(), Integer.parseInt(e.getSets()));
 			records.add(record);
 		}
-		
-		final ArrayList<Pair<EditText, Integer>> editTextList = new ArrayList<Pair<EditText, Integer>>();
-		final ArrayList<Pair<TextView, Integer>> textViewList = new ArrayList<Pair<TextView, Integer>>();
-		final ArrayList<String> textViewNameList = new ArrayList<String>();
-		final ArrayList<String> textViewSetsList = new ArrayList<String>();
-		final ArrayList<String> textViewRepsList = new ArrayList<String>();
-		final ArrayList<String> textViewInfoList = new ArrayList<String>();
 		
 		//fill the table with the exercises
 		for(Exercise e: workout.getExercises()) {
@@ -77,6 +80,7 @@ public class UseWorkout extends Activity{
 			name.setGravity(Gravity.CENTER_VERTICAL);
 			name.setText(e.getName());
 			row.addView(name);
+			//create the EditTexts for weight recording - one for each set
 			for(int i = 0; i < Integer.parseInt(e.getSets()); i++) {				
 				TextView divider = new TextView(this);
 				divider.setBackgroundColor(Color.BLACK);
@@ -90,7 +94,7 @@ public class UseWorkout extends Activity{
 				set.setGravity(Gravity.CENTER);
 				editTextList.add(new Pair<EditText, Integer>(set, (Integer) (exerCount*100 + i)));
 				row.addView(set);
-				
+				//creating dividers between EditTexts - looks better, not necessary
 				if(i == Integer.parseInt(e.getSets()) -1) {
 					TextView divider2 = new TextView(this);
 					divider2.setBackgroundColor(Color.BLACK);
@@ -105,22 +109,8 @@ public class UseWorkout extends Activity{
 			exerCount++;
 		}
 		
-		for(Pair<EditText, Integer> pair: editTextList) {
-			final int code = pair.getR();
-			pair.getL().addTextChangedListener(new TextWatcher(){
-				@Override
-				public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-				@Override
-				public void onTextChanged(CharSequence s, int start, int before, int count) {
-					//code/100 will be the exercise number
-					int exerCode = (int) Math.floor(code/100);
-					getRecord(exerCode).recordSet(code%100, s.toString());
-				}
-				@Override
-				public void afterTextChanged(Editable s) {}
-			});
-		}
-		
+		//set each exercise title (TextView) to be long-clickable
+		//long-clicking will bring up extra information about the exercise
 		for(Pair<TextView, Integer> tvPair : textViewList) {
 			final int pos = tvPair.getR();
 			TextView tv = tvPair.getL();
@@ -160,6 +150,7 @@ public class UseWorkout extends Activity{
 		final Context context_use_workout = this;
 	    switch (item.getItemId()) {
 	        case R.id.action_save:
+	        	//confirmation dialog
 	        	new AlertDialog.Builder(this)
 	            	.setIcon(android.R.drawable.ic_dialog_alert)
 	            	.setTitle("Record Workout")
@@ -167,6 +158,13 @@ public class UseWorkout extends Activity{
 	            	.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 	            		@Override
 	            		public void onClick(DialogInterface dialog, int which) {
+	            			//when recording the workout, first get all of the weights and add them to the records
+	            			for(Pair<EditText, Integer> pair: editTextList) {
+	            				final int code = pair.getR();
+	            				int exerCode = (int) Math.floor(code/100);
+	            				String weight = pair.getL().getText().toString();
+	            				if (weight.length() > 0) { getRecord(exerCode).recordSet(code%100, weight); }
+	            			}
 	            			FileManagement.mergeRecordList(records);
 	            			Toast.makeText(context_use_workout, "Recorded Workout!", Toast.LENGTH_SHORT).show();
 	            			finish();
@@ -176,6 +174,7 @@ public class UseWorkout extends Activity{
 	            	.show();
 	            return true;
 	        case R.id.action_exit:
+	        	//confirmation dialog
 	        	new AlertDialog.Builder(this)
 	            	.setIcon(android.R.drawable.ic_dialog_alert)
 	            	.setTitle("Discard Changes")

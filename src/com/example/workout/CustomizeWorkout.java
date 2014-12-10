@@ -155,7 +155,7 @@ public class CustomizeWorkout extends Activity implements EditedExercise {
 	        case R.id.action_save:
 	        	//SAVE
 	        	checkRemoved();
-	        	if(WorkoutObjects.workoutList.hasWorkout(workout.getName())) {
+	        	if(WorkoutObjects.workoutList.hasWorkout(workout.getName()) && position == -1) {
 	        		Toast.makeText(this, "Workout name already exists!", Toast.LENGTH_SHORT).show();
 	        	}
 	        	else{
