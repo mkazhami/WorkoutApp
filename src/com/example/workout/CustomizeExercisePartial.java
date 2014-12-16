@@ -57,8 +57,6 @@ public class CustomizeExercisePartial extends DialogFragment{
         editExercise.setPositiveButton("Done", new PositiveButtonClickListener());
         editExercise.setNegativeButton("Cancel", new NegativeButtonClickListener());
         
-        //setFieldListeners();
-        
         return editExercise.create();
 	}
 	
@@ -117,56 +115,4 @@ public class CustomizeExercisePartial extends DialogFragment{
         }
         
     }
-    
-    private void setFieldListeners(){		
-		TextWatcher repsListener = new TextWatcher(){
-			@Override
-			public void afterTextChanged(Editable arg0) {}
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,int arg3) {}
-			@Override
-			public void onTextChanged(CharSequence arg0, int arg1, int arg2,int arg3) {
-				String temp = reps;
-				reps = arg0.toString();
-				if(!isValid(reps)) {
-					Toast toast = Toast.makeText(getActivity(), "Invalid reps!", Toast.LENGTH_SHORT);
-					toast.setGravity(Gravity.CENTER, 0, 0);
-					toast.show();
-					reps = temp;
-	        	}
-			}
-		};
-		
-		TextWatcher setsListener = new TextWatcher(){
-			@Override
-			public void afterTextChanged(Editable arg0) {}
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,int arg3) {}
-			@Override
-			public void onTextChanged(CharSequence arg0, int arg1, int arg2,int arg3) {
-				String temp = sets;
-				sets = arg0.toString();
-				if(!isValid(sets)) {
-					Toast toast = Toast.makeText(getActivity(), "Invalid sets!", Toast.LENGTH_SHORT);
-					toast.setGravity(Gravity.CENTER, 0, 0);
-					toast.show();
-					sets = temp;
-	        	}
-			}
-		};
-		
-		TextWatcher infoListener = new TextWatcher(){
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-			@Override
-			public void onTextChanged(CharSequence arg0, int start, int before, int count) {
-				info = arg0.toString();
-			}
-			@Override
-			public void afterTextChanged(Editable s) {}
-		};
-		editReps.addTextChangedListener(repsListener);
-		editSets.addTextChangedListener(setsListener);
-		editInfo.addTextChangedListener(infoListener);
-	}
 }

@@ -40,6 +40,7 @@ public class FileManagement {
 	}
 	
 	public static void fillWorkoutList() {
+		if(WorkoutObjects.workoutList.getSize() != 0) return;
 		File wFile = new File(WorkoutObjects.FOLDER_NAME + WorkoutObjects.WORKOUT_FILE_NAME);
 		if (!(wFile.exists())) {
 			try { wFile.createNewFile(); } 

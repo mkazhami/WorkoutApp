@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		WorkoutObjects.workoutList = WorkoutList.getInstance();
+		if(WorkoutObjects.workoutList == null) WorkoutObjects.workoutList = WorkoutList.getInstance();
 		WorkoutObjects.workoutNamesList = new ArrayList<String>();
 		WorkoutObjects.exerciseNamesList = new ArrayList<String>();
 		WorkoutObjects.recordList = new ArrayList<ExerciseRecord>();
@@ -85,7 +85,8 @@ public class MainActivity extends Activity {
 				f.show(fm, "dialog");
 				return true;
 			case R.id.action_history:
-				
+				Intent intent = new Intent(MainActivity.this, ViewHistoryMenu.class);
+				startActivity(intent);
 			default:
 				return super.onOptionsItemSelected(item);
 		}

@@ -1,7 +1,16 @@
 package com.example.workout;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
+import org.achartengine.ChartFactory;
+import org.achartengine.model.TimeSeries;
+import org.achartengine.model.XYMultipleSeriesDataset;
+import org.achartengine.renderer.XYMultipleSeriesRenderer;
+import org.achartengine.renderer.XYSeriesRenderer;
+
+import com.jjoe64.graphview.BarGraphView;
 import com.jjoe64.graphview.CustomLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewDataInterface;
@@ -9,8 +18,10 @@ import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class ViewHistoryExercise extends Activity{
 
@@ -22,13 +33,17 @@ public class ViewHistoryExercise extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_history_exercise);
 		
+		sets = new ArrayList<Pair<String, String>>();
+		
 		Bundle bundle = this.getIntent().getExtras();
 		exerName = bundle.getString("exerName");
 		for(ExerciseRecord er : WorkoutObjects.recordList) {
 			if(er.getName().equals(exerName)) {
-				sets = er.getSets();
+				for(Pair<String, String> pair : er.getSets()) {
+					sets.add(new Pair<String, String>(pair.getL(), pair.getR()));
+				}
 				for(Pair<String, String> pair : sets) {
-					pair.getL().replaceAll("/", "");
+					//pair.setL(pair.getL().replaceAll("/", ""));
 				}
 				break;
 			}
@@ -39,34 +54,49 @@ public class ViewHistoryExercise extends Activity{
 	
 	private void createGraph() {
 		int size = sets.size();
-		GraphViewData[] data = new GraphViewData[size];
+		String[] firstDate = null;
+		String[] lastDate = null;
+		double maxWeight = 0;
+		
+		
+		//GraphViewData[] data = new GraphViewData[size];
+		TimeSeries series = new TimeSeries("Line");
 		for(int i = 0; i < size; i++) {
 			Pair<String, String> pair = sets.get(i);
-			data[i] = new GraphViewData(Double.parseDouble(pair.getL()), Double.parseDouble(pair.getR()));
+			String[] strDate = pair.getL().split("/");
+			if(i == 0) firstDate = strDate;
+			if(i == size - 1) lastDate = strDate;
+			if(Double.parseDouble(pair.getR()) > maxWeight) maxWeight = Double.parseDouble(pair.getR());
+			@SuppressWarnings("deprecation")
+			Date date = new Date(Integer.parseInt(strDate[2]) - 1900,
+								 Integer.parseInt(strDate[1]),
+								 Integer.parseInt(strDate[0]));
+			series.add(date, Double.parseDouble(pair.getR()));
 		}
-		GraphViewSeries exerciseGraphSeries = new GraphViewSeries(data);
-		LinearLayout layout = (LinearLayout) findViewById(R.id.exerciseHistory);
-		GraphView exerciseGraph = new LineGraphView(this, exerName + " history");
-		exerciseGraph.addSeries(exerciseGraphSeries);
-		exerciseGraph.setCustomLabelFormatter(new CustomLabelFormatter() {
-	        @Override
-	        public String formatLabel(double value, boolean isValueX) {
-	            if (isValueX) {
-	                int newVal = (int) value;
-	                String year = "";
-	                String month = ""; 
-	                String day = "";
-	                day += Integer.toString(newVal%100);
-	                newVal = newVal / 100;
-	                month += Integer.toString(newVal%100);
-	                newVal = newVal / 100;
-	                year = Integer.toString(newVal);
-	                return day + "/" + month + "/" + year;
-	            }
-	            return "" + (int) value;
-	        }
-	    });
-		layout.addView(exerciseGraph);
+		
+		
+		java.util.Date minDate = (java.util.Date) new GregorianCalendar(Integer.parseInt(firstDate[2]) - 1900,
+				 							Integer.parseInt(firstDate[1]),
+				 							Integer.parseInt(firstDate[0])).getTime();
+	    java.util.Date maxDate = (java.util.Date) new GregorianCalendar(Integer.parseInt(lastDate[2]) - 1900,
+				 							Integer.parseInt(lastDate[1]),
+				 							Integer.parseInt(lastDate[0])).getTime();
+	    double THREEDAYS = 81300000 *3;
+		double minX = minDate.getTime() - THREEDAYS;
+		double maxX = maxDate.getTime() + THREEDAYS;
+	    
+		XYMultipleSeriesDataset dataSet = new XYMultipleSeriesDataset();
+		dataSet.addSeries(series);
+		XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
+		mRenderer.setPanLimits(new double[] {minX, maxX, 0, maxWeight});
+		mRenderer.setZoomInLimitX(81300000);
+		mRenderer.setZoomInLimitY(maxWeight/2);
+		XYSeriesRenderer renderer = new XYSeriesRenderer();
+		mRenderer.setShowGrid(true);
+		mRenderer.addSeriesRenderer(renderer);
+		mRenderer.setLabelsTextSize(25);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.exerciseHistoryGraph);
+		layout.addView(ChartFactory.getTimeChartView(this, dataSet, mRenderer, "MM/dd/yyyy"));
 	}
 	
 	public class GraphViewData implements GraphViewDataInterface {

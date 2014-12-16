@@ -45,6 +45,9 @@
             android:name="com.example.workout.ViewHistoryExercise"
             android:label="@string/title_activity_view_history_exercise">
         </activity>
+        <activity
+            android:name="org.achartengine.GraphicalActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -7,6 +7,8 @@ import com.google.gson.Gson;
 
 public class ExerciseRecord {
 
+	static int increment = 0;
+	
 	private String name;
 	private ArrayList<Pair<String, String>> sets; //date and weight values - date will be in day/month/year format
 	
@@ -30,7 +32,7 @@ public class ExerciseRecord {
 	
 	public void recordSet(int set, String weight) {
 		Calendar c = Calendar.getInstance();
-		String date = Integer.toString(c.get(Calendar.DAY_OF_MONTH)) + "/" +
+		String date = Integer.toString(c.get(Calendar.DAY_OF_MONTH) + increment) + "/" +
 					  Integer.toString(c.get(Calendar.MONTH) + 1) + "/" + //need MONTH + 1 because January = 0
 					  Integer.toString(c.get(Calendar.YEAR));
 		if(set >= sets.size()) {
@@ -40,6 +42,7 @@ public class ExerciseRecord {
 			sets.remove(set);
 			sets.add(set, new Pair<String, String>(date, weight));
 		}
+		increment++;
 	}
 	
 	public void recordSet(Pair<String, String> info) {

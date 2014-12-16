@@ -156,13 +156,24 @@ public class UseWorkout extends Activity{
 	            	.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 	            		@Override
 	            		public void onClick(DialogInterface dialog, int which) {
+	            			int max = 0;
+	            			int maxCode = 0;
+	            			//Pair<EditText, Integer> maxPair;
 	            			//when recording the workout, first get all of the weights and add them to the records
 	            			for(Pair<EditText, Integer> pair: editTextList) {
 	            				final int code = pair.getR();
-	            				int exerCode = (int) Math.floor(code/100);
+	            				//int exerCode = (int) Math.floor(code/100);
 	            				String weight = pair.getL().getText().toString();
-	            				if (weight.length() > 0) { getRecord(exerCode).recordSet(code%100, weight); }
+	            				if (weight.length() > 0) {
+	            					int weightInt = Integer.parseInt(weight);
+		            				if (weightInt > max) {
+		            					max = weightInt;
+		            					maxCode = code;
+		            					//maxPair = pair;
+		            				}
+	            				}
 	            			}
+	            			if (max > 0) getRecord((int) Math.floor(maxCode/100)).recordSet(maxCode%100, Integer.toString(max));
 	            			FileManagement.mergeRecordList(records);
 	            			Toast.makeText(context_use_workout, "Recorded Workout!", Toast.LENGTH_SHORT).show();
 	            			finish();
