@@ -1,3 +1,4 @@
 WorkoutApp
 ==========
-Android application to plan, record, and track workouts.
+THIS PROJECT WAS MOVED TO mkazhami14/Workout.
+MIGRATED FROM ECLIPSE TO ANDROID STUDIO. CHANGES WILL NO LONGER BE MADE TO THIS REPOSITORY.
